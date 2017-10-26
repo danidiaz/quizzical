@@ -8,7 +8,11 @@ cabal-version:       >= 2
 library tablitas
     hs-source-dirs:      impls
     exposed-modules:     Tablita
-    build-depends:       base >= 4.10 && < 4.11
+    build-depends:       base >= 4.10 && < 4.11,
+                         generics-sop >= 0.3.1.0,
+                         containers >= 0.5.10,
+                         distributive >= 0.5,
+                         adjunctions >= 4.3
     default-language:    Haskell2010
 
 executable Einstufung

@@ -1,1 +1,15 @@
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE UndecidableInstances #-}
 signature Tablita where
+
+import qualified Generics.SOP as G
+
+data Tablita :: [*] -> * -> * 
+
+instance Functor (Tablita xs)
+instance Foldable (Tablita xs)
+instance Traversable (Tablita xs)
+instance (G.All (G.Compose Show G.I) xs,Show r) => Show (Tablita xs r)
