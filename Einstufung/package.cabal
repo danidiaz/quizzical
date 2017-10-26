@@ -1,0 +1,20 @@
+name:                Einstufung
+version:             0.1.0.0
+license:             BSD3
+license-file:        LICENSE
+build-type:          Simple
+cabal-version:       >= 2
+
+library tablitas
+    hs-source-dirs:      impls
+    exposed-modules:     Tablita
+    build-depends:       base >= 4.10 && < 4.11
+    default-language:    Haskell2010
+
+executable Einstufung
+    hs-source-dirs:      src
+    main-is:             Main.hs
+    build-depends:       base >= 4.10 && < 4.11,
+                         Grammatik == 0.1.0.0,
+                         tablitas
+    default-language:    Haskell2010
