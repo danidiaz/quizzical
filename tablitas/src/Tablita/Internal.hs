@@ -72,3 +72,4 @@ toList' (Tablita t) = fmap (first (to . SOP . Z)) $ M.toList t
 enumerate_NP :: forall xs. (All (Enum `And` Bounded) xs) => [NP I xs]
 enumerate_NP = sequence_NP @xs 
              $ cpure_NP (Proxy @(Enum `And` Bounded)) (enumFromTo minBound maxBound)
+

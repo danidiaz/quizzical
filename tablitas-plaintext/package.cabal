@@ -14,7 +14,16 @@ library
                        distributive >= 0.5,
                        adjunctions >= 4.3,
                        megaparsec >= 6.2.0,
-                       text >= 1.2.2.2,
-                       tablitas == 0.1.0.0
+                       text >= 1.2.2.2
   hs-source-dirs:      src
+  default-language:    Haskell2010
+
+test-suite tests
+  type:           exitcode-stdio-1.0
+  ghc-options:    -Wall -threaded
+  hs-source-dirs: tests
+  main-is:        tests.hs
+  build-depends:
+        base >= 4.10 && < 4.11         ,
+        tasty >= 0.10.1.1              
   default-language:    Haskell2010

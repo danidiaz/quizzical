@@ -15,13 +15,18 @@ module Tablita.Plaintext where
 
 import Data.Void
 import Data.Text (Text)
-import Text.Megaparsec
+import Control.Applicative
 import Generics.SOP (All)
 
-import Tablita
+import Text.Megaparsec
+import Text.Megaparsec.Char
 
 type Parser = Parsec Void Text
 
-parse2DFile :: (Dimensions xs, All Read xs, xs ~ [x1,x2]) => String -> Tablita xs String
-parse2DFile = undefined
-
+parser2D :: (Ord d1,Ord d2) => (Parser d1,Parser d2) -> Parser r -> Parser [((d1,d2),r)]
+parser2D (d1,d2) r = do
+    cols <- space1 *> liftA2 (\cs c -> cs ++ [c]) (some (d2 <* space1)) (d2 <* space <* eol)   
+    return []
+     
+--parse2DFile :: (Dimensions xs, All Read xs, xs ~ [x1,x2]) => String -> Tablita xs String
+--parse2DFile = undefined
