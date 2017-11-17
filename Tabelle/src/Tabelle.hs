@@ -5,9 +5,9 @@
 --
 --   Be careful with the number and size of the dimensions or you will risk a
 --   combinatorial explosion!
-module Tablita (
-      -- * The Tablita data type
-      Tablita
+module Tabelle (
+      -- * The Tabelle data type
+      Tabelle
     , Dimensions
     , fromList
     , fromList'
@@ -15,6 +15,6 @@ module Tablita (
     , toList'
     ) where
 
-import Tablita.Internal
+import Tabelle.Internal
 
 

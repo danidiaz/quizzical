@@ -1,5 +1,5 @@
 -- https://jpvillaisaza.github.io/2017/03/14/minimal-cabal-files/
-name:                tablitas
+name:                Tabelle
 version:             0.1.0.0
 license:             BSD3
 license-file:        LICENSE
@@ -7,8 +7,8 @@ build-type:          Simple
 cabal-version:       >=2
 
 library
-  exposed-modules:     Tablita
-                       Tablita.Internal
+  exposed-modules:     Tabelle
+                       Tabelle.Internal
   build-depends:       base >=4.10 && <4.11,
                        generics-sop >= 0.3.1.0,
                        containers >= 0.5.10,

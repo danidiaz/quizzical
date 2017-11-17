@@ -11,7 +11,7 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE ViewPatterns #-}
-module Tablita.Plaintext where
+module Tabelle.Plaintext where
 
 import Data.Void
 import Data.Text (Text)
@@ -28,5 +28,5 @@ parser2D (d1,d2) r = do
     cols <- space1 *> liftA2 (\cs c -> cs ++ [c]) (some (d2 <* space1)) (d2 <* space <* eol)   
     return []
      
---parse2DFile :: (Dimensions xs, All Read xs, xs ~ [x1,x2]) => String -> Tablita xs String
+--parse2DFile :: (Dimensions xs, All Read xs, xs ~ [x1,x2]) => String -> Tabelle xs String
 --parse2DFile = undefined
