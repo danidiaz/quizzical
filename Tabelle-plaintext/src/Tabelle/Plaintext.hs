@@ -28,10 +28,14 @@ type Parser = Parsec Void Text
 -- http://hackage.haskell.org/package/parser-combinators-0.2.0/docs/Control-Applicative-Combinators.html
 
 parser2D :: (Ord d1,Ord d2) => (Parser d1,Parser d2) -> Parser r -> Parser [((d1,d2),r)]
-parser2D (d1,d2) r = do
+parser2D (d1,d2) rP = do
     -- cols <- space1 *> sepBy liftA2 (\cs c -> cs ++ [c]) (some (d2 <* space1)) (d2 <* space <* eol)   
     cols <- space1 *> sepEndBy1 d1 space1 <* eol
+    sepEndBy (rowP cols) eol
     return []
+    where 
+    rowP cols = do
+        d2 *> sepEndBy1 rP space1  
      
 --parse2DFile :: (Dimensions xs, All Read xs, xs ~ [x1,x2]) => String -> Tabelle xs String
 --parse2DFile = undefined
