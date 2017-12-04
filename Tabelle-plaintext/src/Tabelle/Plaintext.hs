@@ -11,7 +11,8 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE ViewPatterns #-}
-module Tabelle.Plaintext where
+{-# LANGUAGE ApplicativeDo #-}
+module Tabelle.Plaintext (parser2D) where
 
 import Data.Void
 import Data.Text (Text)
@@ -29,13 +30,12 @@ type Parser = Parsec Void Text
 
 parser2D :: (Ord d1,Ord d2) => (Parser d1,Parser d2) -> Parser r -> Parser [((d1,d2),r)]
 parser2D (d1,d2) rP = do
-    -- cols <- space1 *> sepBy liftA2 (\cs c -> cs ++ [c]) (some (d2 <* space1)) (d2 <* space <* eol)   
     cols <- space1 *> sepEndBy1 d1 space1 <* eol
-    sepEndBy (rowP cols) eol
-    return []
+    rows <- sepEndBy (rowP cols) eol
+    return $ mconcat $ zipWith (\c (r,v) -> ((c,r),v)) cols <$> rows
     where 
     rowP cols = do
-        d2 *> sepEndBy1 rP space1  
+        header <- d2
+        row <- sepEndBy1 rP space1  
+        return $ map ((,) header) row
      
---parse2DFile :: (Dimensions xs, All Read xs, xs ~ [x1,x2]) => String -> Tabelle xs String
---parse2DFile = undefined
