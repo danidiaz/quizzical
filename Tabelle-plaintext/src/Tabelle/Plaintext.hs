@@ -12,8 +12,9 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE ApplicativeDo #-}
-module Tabelle.Plaintext (parser2D) where
+module Tabelle.Plaintext (parser2D,ident) where
 
+import Data.Char
 import Data.Void
 import Data.Text (Text)
 import Control.Applicative
@@ -39,3 +40,7 @@ parser2D (d1,d2) rP = do
         row <- sepEndBy1 rP space1  
         return $ map ((,) header) row
      
+ident :: Parser Text
+ident = takeWhile1P Nothing isAlphaNum
+
+
