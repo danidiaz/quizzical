@@ -32,13 +32,13 @@ type Parser = Parsec Void Text
 
 parser2D :: (Show d1,Ord d1,Show d2,Ord d2,Show r) => (Parser d1,Parser d2) -> Parser r -> Parser [((d1,d2),r)]
 parser2D (d1,d2) rP = do
-    cols <- blank1 *> sepEndBy1 (dbg "d1" d1) blank1 <* eol
-    rows <- sepEndBy (dbg "rowps" $ rowP cols) eol
+    cols <- blank1 *> sepEndBy1 d1 blank1 <* eol
+    rows <- sepEndBy1 (rowP cols) eol
     return $ mconcat $ zipWith (\c (r,v) -> ((c,r),v)) cols <$> rows
     where 
     rowP cols = do
-        header <- dbg "d2" d2 <* blank1
-        row <- sepEndBy1 (dbg "rP" rP) blank1  
+        header <- d2 <* blank1
+        row <- sepEndBy1 rP blank1  
         return $ map ((,) header) row
      
 ident :: Parser Text
