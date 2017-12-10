@@ -1,12 +1,11 @@
 {-# LANGUAGE ApplicativeDo #-}
-module Tabelle.Plaintext (parser2D,ident) where
+module Tableparse (parser2D,ident) where
 
 import Data.Char
 import Data.Void
 import Data.Functor
 import Data.Text (Text)
 import Control.Applicative
-import Generics.SOP (All)
 
 import Text.Megaparsec
 import Text.Megaparsec.Char

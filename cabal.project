@@ -1,4 +1,4 @@
 packages: Einstufung/
           Grammatik/
           Tabelle/
-          Tabelle-plaintext/
+          tableparse/

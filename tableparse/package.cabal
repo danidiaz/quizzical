@@ -1,5 +1,5 @@
 -- https://jpvillaisaza.github.io/2017/03/14/minimal-cabal-files/
-name:                Tabelle-plaintext
+name:                tableparse
 version:             0.1.0.0
 license:             BSD3
 license-file:        LICENSE
@@ -8,13 +8,9 @@ cabal-version:       >=2
 
 library
     exposed-modules:     
-        Tabelle.Plaintext
+        Tableparse
     build-depends:       
         base >=4.10 && <4.11,
-        generics-sop >= 0.3.1.0,
-        containers >= 0.5.10,
-        distributive >= 0.5,
-        adjunctions >= 4.3,
         megaparsec >= 6.2.0,
         text >= 1.2.2.2
     hs-source-dirs:     
@@ -37,6 +33,6 @@ test-suite tests
         tasty-hunit >= 0.9.2,
         megaparsec >= 6.2.0,
         text >= 1.2.2.2,
-        Tabelle-plaintext
+        tableparse
     default-language:    
         Haskell2010
