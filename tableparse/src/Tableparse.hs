@@ -16,7 +16,10 @@ type Parser = Parsec Void Text
 -- http://hackage.haskell.org/package/megaparsec-6.2.0/docs/Text-Megaparsec-Char.html
 -- http://hackage.haskell.org/package/parser-combinators-0.2.0/docs/Control-Applicative-Combinators.html
 
-table2D :: (Show d1,Ord d1,Show d2,Ord d2,Show r) => (Parser d1,Parser d2) -> Parser r -> Parser [((d1,d2),r)]
+table2D :: (Show d1,Ord d1,Show d2,Ord d2,Show r) 
+        => (Parser d1,Parser d2) 
+        -> Parser r 
+        -> Parser [((d1,d2),r)]
 table2D (d1,d2) rP = do
     cols <- blank1 *> sepEndBy1 d1 blank1 <* eol
     rows <- sepEndBy1 (rowP cols) eol
