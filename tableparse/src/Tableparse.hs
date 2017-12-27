@@ -1,5 +1,5 @@
 {-# LANGUAGE ApplicativeDo #-}
-module Tableparse (parser2D,ident) where
+module Tableparse (table2D,dim,cell) where
 
 import Data.Char
 import Data.Void
@@ -16,8 +16,8 @@ type Parser = Parsec Void Text
 -- http://hackage.haskell.org/package/megaparsec-6.2.0/docs/Text-Megaparsec-Char.html
 -- http://hackage.haskell.org/package/parser-combinators-0.2.0/docs/Control-Applicative-Combinators.html
 
-parser2D :: (Show d1,Ord d1,Show d2,Ord d2,Show r) => (Parser d1,Parser d2) -> Parser r -> Parser [((d1,d2),r)]
-parser2D (d1,d2) rP = do
+table2D :: (Show d1,Ord d1,Show d2,Ord d2,Show r) => (Parser d1,Parser d2) -> Parser r -> Parser [((d1,d2),r)]
+table2D (d1,d2) rP = do
     cols <- blank1 *> sepEndBy1 d1 blank1 <* eol
     rows <- sepEndBy1 (rowP cols) eol
     return $ mconcat $ zipWith (\c (r,v) -> ((c,r),v)) cols <$> rows
@@ -27,8 +27,11 @@ parser2D (d1,d2) rP = do
         row <- sepEndBy1 rP blank1  
         return $ map ((,) header) row
      
-ident :: Parser Text
-ident = takeWhile1P Nothing isAlphaNum
+dim :: Parser Text
+dim = takeWhile1P Nothing isAlphaNum
+
+cell :: Parser Text
+cell =  takeWhile1P Nothing (\c -> isAlphaNum c || c == '-')
 
 blank1 :: Parser ()
 blank1 = void $ takeWhile1P (Just "white space") $ (==) ' '
