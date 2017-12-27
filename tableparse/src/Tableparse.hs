@@ -1,12 +1,12 @@
 {-# LANGUAGE ApplicativeDo #-}
-module Tableparse (table2D,dim,cell) where
+module Tableparse (table2D,dim,identifier,cell) where
 
 import Data.Char
 import Data.Void
 import Data.Functor
-import Data.Text (Text)
+import Data.Text (Text,unpack)
 import Control.Applicative
-
+import Text.Read
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
@@ -30,8 +30,15 @@ table2D (d1,d2) rP = do
         row <- sepEndBy1 rP blank1  
         return $ map ((,) header) row
      
-dim :: Parser Text
-dim = takeWhile1P Nothing isAlphaNum
+dim :: Read a => Parser a
+dim = do
+    d <- identifier
+    case readMaybe (unpack d) of
+        Nothing -> empty
+        Just a -> return a
+
+identifier :: Parser Text
+identifier = takeWhile1P Nothing isAlphaNum
 
 cell :: Parser Text
 cell =  takeWhile1P Nothing (\c -> isAlphaNum c || c == '-')
