@@ -9,7 +9,7 @@ import Test.Tasty.HUnit (testCase,Assertion,assertEqual,assertBool)
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
-import Tableparse
+import Tabelle.Klartext
 
 main :: IO ()
 main = defaultMain tests
@@ -28,20 +28,20 @@ tabletext :: Text
 tabletext =
        mconcat
     .  (\ts -> intersperse "\n" ts ++ ["\n"])
-    $  ["    d1a  d1b"
-       ,"d2x ax   bx"
-       ,"d2y ay   by "
-       ,"d2z az   bz"
+    $  ["    d2a  d2b"
+       ,"d1x xa   xb"
+       ,"d1y ya   yb"
+       ,"d1z za   zb"
        ]
 
 basicexpected :: [((Text,Text),Text)]
 basicexpected = 
-    [ (("d1a","d2x"),"ax")
-    , (("d1b","d2x"),"bx")
-    , (("d1a","d2y"),"ay")
-    , (("d1b","d2y"),"by")
-    , (("d1a","d2z"),"az")
-    , (("d1b","d2z"),"bz")
+    [ (("d1x","d2a"),"xa")
+    , (("d1x","d2b"),"xb")
+    , (("d1y","d2a"),"ya")
+    , (("d1y","d2b"),"yb")
+    , (("d1z","d2a"),"za")
+    , (("d1z","d2b"),"zb")
     ] 
 
 tabletextSpaceAtEnd :: Text

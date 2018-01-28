@@ -21,12 +21,12 @@ table2D :: (Show d1,Ord d1,Show d2,Ord d2,Show r)
         -> Parser r 
         -> Parser [((d1,d2),r)]
 table2D (d1,d2) rP = do
-    cols <- blank1 *> sepEndBy1 d1 blank1 <* eol
+    cols <- blank1 *> sepEndBy1 d2 blank1 <* eol
     rows <- sepEndBy1 (rowP cols) eol
-    return $ mconcat $ zipWith (\c (r,v) -> ((c,r),v)) cols <$> rows
+    return $ mconcat $ zipWith (\c (r,v) -> ((r,c),v)) cols <$> rows
     where 
     rowP cols = do
-        header <- d2 <* blank1
+        header <- d1 <* blank1
         row <- sepEndBy1 rP blank1  
         return $ map ((,) header) row
      
