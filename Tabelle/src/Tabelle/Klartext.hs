@@ -1,5 +1,5 @@
 {-# LANGUAGE ApplicativeDo #-}
-module Tableparse (table2D,dim,identifier,cell) where
+module Tabelle.Klartext (table2D,dim,dim',cell) where
 
 import Data.Char
 import Data.Void
@@ -30,18 +30,18 @@ table2D (d1,d2) rP = do
         row <- sepEndBy1 rP blank1  
         return $ map ((,) header) row
      
-dim :: Read a => Parser a
-dim = do
-    d <- identifier
+dim :: Parser Text
+dim = takeWhile1P Nothing (\c -> isAlphaNum c || c == '\'')
+
+dim' :: Read a => Parser a
+dim' = do
+    d <- dim
     case readMaybe (unpack d) of
         Nothing -> empty
         Just a -> return a
 
-identifier :: Parser Text
-identifier = takeWhile1P Nothing isAlphaNum
-
 cell :: Parser Text
-cell =  takeWhile1P Nothing (\c -> isAlphaNum c || c == '-')
+cell =  takeWhile1P Nothing (\c -> isAlphaNum c || c == '-' || c == '_' || c == '.')
 
 blank1 :: Parser ()
 blank1 = void $ takeWhile1P (Just "white space") $ (==) ' '
