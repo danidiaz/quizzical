@@ -46,3 +46,9 @@ cell =  takeWhile1P Nothing (\c -> isAlphaNum c || c == '-' || c == '_' || c == 
 blank1 :: Parser ()
 blank1 = void $ takeWhile1P (Just "white space") $ (==) ' '
 
+-- TODO
+-- set notation
+-- 1d tables
+-- changes in nomenclature (-D)
+-- integrate with Tabelle ?
+--
