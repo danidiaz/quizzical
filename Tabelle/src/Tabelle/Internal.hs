@@ -31,6 +31,9 @@ type Dimensions xs = (All (Enum `And` Bounded) xs,All (Compose Eq I) xs,All (Com
 instance (All (Generics.SOP.Compose Show I) xs, Show r) => Show (Tabelle xs r) where
     show (Tabelle t) = "fromRight undefined (fromList " ++ show (M.toList t) ++ ")"
 
+instance (Dimensions xs,Eq v) => Eq (Tabelle xs v) where
+    tabelle1 == tabelle2 = and (liftA2 (==) tabelle1 tabelle2)
+
 instance Dimensions xs => Distributive (Tabelle xs) where
     distribute (fmap getTabelle -> f) = Tabelle $ 
         M.fromList $ fmap (\k -> (k,fromJust . M.lookup k <$> f)) enumerate_NP
