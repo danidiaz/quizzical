@@ -10,7 +10,7 @@ library
   exposed-modules:     Tabelle
                        Tabelle.Internal
                        Tabelle.Klartext
-  build-depends:       base >=4.10 && <4.11,
+  build-depends:       base >=4.10 && <5,
                        generics-sop >= 0.3.1.0,
                        containers >= 0.5.10,
                        distributive >= 0.5,

@@ -16,9 +16,12 @@ Deutsche Grammatik
 
 [German/Grammar/Pronouns](https://en.wikibooks.org/wiki/German/Grammar/Pronouns)
 
-[Grammatical Framework: Programming with Multilingual Grammars](https://www.goodreads.com/book/show/11963071-grammatical-framework)
+[Grammatical Framework: Programming with Multilingual Grammars](https://www.goodreads.com/book/show/11963071-grammatical-framework) [book page](http://www.grammaticalframework.org/gf-book/)
 
 [Introduction to Montague Semantics](https://www.goodreads.com/book/show/1887799.Introduction_to_Montague_Semantics)
 
 [Computational Semantics with Functional Programming](https://www.goodreads.com/book/show/9479651-computational-semantics-with-functional-programming)
+
+[The Language Technology Group](http://www.cse.chalmers.se/research/group/Language-technology/)
+
 

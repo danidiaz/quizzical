@@ -9,6 +9,6 @@ cabal-version:       >= 2
 library
     exposed-modules:     Grammatik
     hs-source-dirs:      lib
-    build-depends:       base >= 4.10 && < 4.11,
+    build-depends:       base >= 4.10 && < 5,
                          Tabelle == 0.1.0.0
     default-language:    Haskell2010

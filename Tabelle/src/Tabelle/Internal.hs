@@ -47,6 +47,9 @@ instance Dimensions xs => Applicative (Tabelle xs) where
     pure a = tabulate (pure a)
     Tabelle f <*> Tabelle a = Tabelle (M.intersectionWith id f a) 
 
+instance (Dimensions xs, Semigroup r) => Semigroup (Tabelle xs r) where
+    a <> b = liftA2 (<>) a b
+
 instance (Dimensions xs, Monoid r) => Monoid (Tabelle xs r) where
     mempty = tabulate (const mempty)
     a `mappend` b = liftA2 mappend a b
