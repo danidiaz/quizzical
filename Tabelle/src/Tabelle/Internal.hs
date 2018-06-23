@@ -13,15 +13,15 @@
 {-# LANGUAGE ViewPatterns #-}
 module Tabelle.Internal where
 
-import Data.Maybe (fromJust)
-import Data.Bifunctor (first)
-import Data.Proxy
-import Data.Distributive
-import Data.Functor.Rep
-import Control.Applicative
-import Generics.SOP (Compose,I,All,And,NP,IsProductType,SOP(SOP),NS(Z),unSOP,unZ,from,to)
-import Generics.SOP.NP (sequence_NP, cpure_NP)
-import Generics.SOP.Dict
+import           Data.Maybe (fromJust)
+import           Data.Bifunctor (first)
+import           Data.Proxy
+import           Data.Distributive
+import           Data.Functor.Rep
+import           Control.Applicative
+import           Generics.SOP (Compose,I,All,And,NP,IsProductType,SOP(SOP),NS(Z),unSOP,unZ,from,to)
+import           Generics.SOP.NP (sequence_NP, cpure_NP)
+import           Generics.SOP.Dict
 import qualified Data.Map.Strict as M
 
 newtype Tabelle (xs :: [*]) r = Tabelle { getTabelle :: M.Map (NP I xs) r } 
@@ -57,26 +57,26 @@ instance (Dimensions xs, Monoid r) => Monoid (Tabelle xs r) where
     mempty = tabulate (const mempty)
     a `mappend` b = liftA2 mappend a b
 
-fromList :: forall xs a. Dimensions xs => [(NP I xs, a)] -> Either (NP I xs) (Tabelle xs a)
-fromList entries =
+fromList_NP :: forall xs a. Dimensions xs => [(NP I xs, a)] -> Either (NP I xs) (Tabelle xs a)
+fromList_NP entries =
     let mapita = M.fromList entries
         findKey k = case M.lookup k mapita of
             Just v  -> Right (k,v)
             Nothing -> Left  k 
     in  Tabelle . M.fromList <$> traverse findKey enumerate_NP 
 
-fromList' :: forall r xs a. (IsProductType r xs, Dimensions xs) => [(r, a)] -> Either r (Tabelle xs a)
-fromList' entries = 
+fromList :: forall r xs a. (IsProductType r xs, Dimensions xs) => [(r, a)] -> Either r (Tabelle xs a)
+fromList entries = 
       first (to . SOP . Z)
-    . fromList  
+    . fromList_NP  
     . fmap (first (unZ . unSOP . from))
     $ entries
 
-toList :: forall xs a . Dimensions xs => Tabelle xs a -> [(NP I xs, a)]  
-toList (Tabelle t) = M.toList t 
+toList_NP :: forall xs a . Dimensions xs => Tabelle xs a -> [(NP I xs, a)]  
+toList_NP (Tabelle t) = M.toList t 
 
-toList' :: forall r xs a . (IsProductType r xs, Dimensions xs) => Tabelle xs a -> [(r, a)]  
-toList' (Tabelle t) = fmap (first (to . SOP . Z)) $ M.toList t 
+toList :: forall r xs a . (IsProductType r xs, Dimensions xs) => Tabelle xs a -> [(r, a)]  
+toList (Tabelle t) = fmap (first (to . SOP . Z)) $ M.toList t 
 
 enumerate_NP :: forall xs. Dimensions xs => [NP I xs]
 enumerate_NP = 

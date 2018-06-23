@@ -8,13 +8,18 @@
 module Tabelle (
       -- * The Tabelle data type
       Tabelle
+    , AllC
     , Dimensions
     , fromList
-    , fromList'
+    , fromList_NP
     , toList
-    , toList'
+    , toList_NP
+    -- * from generics-sop
+    , NP(..)
+    , I(..)
     ) where
+import           Generics.SOP (NP(..),I(..))
 
-import Tabelle.Internal
+import           Tabelle.Internal
 
 
