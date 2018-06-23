@@ -29,7 +29,7 @@ newtype Tabelle (xs :: [*]) r =
     Tabelle { getTabelle :: M.Map (NP I xs) r } 
     deriving (Functor,Foldable,Traversable)
 
-type Dimension = Enum `And` Bounded `And` Compose Eq I `And` Compose Ord I
+type Dimension = Enum `And` Bounded `And` Compose (Show `And` Eq `And` Ord) I
 
 instance (All (Generics.SOP.Compose Show I) xs, Show r) => Show (Tabelle xs r) where
     show (Tabelle t) = "fromRight undefined (fromList " ++ show (M.toList t) ++ ")"
@@ -41,10 +41,16 @@ instance All Dimension xs => Distributive (Tabelle xs) where
     distribute (fmap getTabelle -> f) = 
         let dict :: Dict (All Dimension) xs
             dict = Dict
+            dictTrans0 :: forall z . Dict Dimension z -> Dict (Compose (Show `And` Eq `And` Ord) I) z 
+            dictTrans0 d = withDict d Dict
+            dictTrans1 :: forall z . Dict (Compose (Show `And` Eq `And` Ord) I) z -> Dict (Compose Eq I) z
+            dictTrans1 d = withDict d Dict
+            dictTrans2 :: forall z . Dict (Compose (Show `And` Eq `And` Ord) I) z -> Dict (Compose Ord I) z
+            dictTrans2 d = withDict d Dict
             dictEq :: Dict (All (Compose Eq I)) xs
-            dictEq = mapAll (\d -> withDict d Dict) dict
+            dictEq = mapAll (dictTrans1 . dictTrans0) dict
             dictOrd :: Dict (All (Compose Ord I)) xs
-            dictOrd = mapAll (\d -> withDict d Dict) dict
+            dictOrd = mapAll (dictTrans2 . dictTrans0) dict
          in withDict dictEq (withDict dictOrd (Tabelle (M.fromList (fmap (\k -> (k,fromJust . M.lookup k <$> f)) enumerate_NP))))
 
 instance All Dimension xs => Representable (Tabelle xs) where
@@ -52,18 +58,30 @@ instance All Dimension xs => Representable (Tabelle xs) where
     tabulate f = 
         let dict :: Dict (All Dimension) xs
             dict = Dict
+            dictTrans0 :: forall z . Dict Dimension z -> Dict (Compose (Show `And` Eq `And` Ord) I) z 
+            dictTrans0 d = withDict d Dict
+            dictTrans1 :: forall z . Dict (Compose (Show `And` Eq `And` Ord) I) z -> Dict (Compose Eq I) z
+            dictTrans1 d = withDict d Dict
+            dictTrans2 :: forall z . Dict (Compose (Show `And` Eq `And` Ord) I) z -> Dict (Compose Ord I) z
+            dictTrans2 d = withDict d Dict
             dictEq :: Dict (All (Compose Eq I)) xs
-            dictEq = mapAll (\d -> withDict d Dict) dict
+            dictEq = mapAll (dictTrans1 . dictTrans0) dict
             dictOrd :: Dict (All (Compose Ord I)) xs
-            dictOrd = mapAll (\d -> withDict d Dict) dict
+            dictOrd = mapAll (dictTrans2 . dictTrans0) dict
          in withDict dictEq (withDict dictOrd (Tabelle (M.fromList (fmap (\np -> (np, f np)) enumerate_NP))))
     index (Tabelle t) np = 
         let dict :: Dict (All Dimension) xs
             dict = Dict
+            dictTrans0 :: forall z . Dict Dimension z -> Dict (Compose (Show `And` Eq `And` Ord) I) z 
+            dictTrans0 d = withDict d Dict
+            dictTrans1 :: forall z . Dict (Compose (Show `And` Eq `And` Ord) I) z -> Dict (Compose Eq I) z
+            dictTrans1 d = withDict d Dict
+            dictTrans2 :: forall z . Dict (Compose (Show `And` Eq `And` Ord) I) z -> Dict (Compose Ord I) z
+            dictTrans2 d = withDict d Dict
             dictEq :: Dict (All (Compose Eq I)) xs
-            dictEq = mapAll (\d -> withDict d Dict) dict
+            dictEq = mapAll (dictTrans1 . dictTrans0) dict
             dictOrd :: Dict (All (Compose Ord I)) xs
-            dictOrd = mapAll (\d -> withDict d Dict) dict
+            dictOrd = mapAll (dictTrans2 . dictTrans0) dict
          in withDict dictEq (withDict dictOrd (fromJust (M.lookup np t)))
 
 instance All Dimension xs => Applicative (Tabelle xs) where
@@ -71,10 +89,16 @@ instance All Dimension xs => Applicative (Tabelle xs) where
     Tabelle f <*> Tabelle a = 
         let dict :: Dict (All Dimension) xs
             dict = Dict
+            dictTrans0 :: forall z . Dict Dimension z -> Dict (Compose (Show `And` Eq `And` Ord) I) z 
+            dictTrans0 d = withDict d Dict
+            dictTrans1 :: forall z . Dict (Compose (Show `And` Eq `And` Ord) I) z -> Dict (Compose Eq I) z
+            dictTrans1 d = withDict d Dict
+            dictTrans2 :: forall z . Dict (Compose (Show `And` Eq `And` Ord) I) z -> Dict (Compose Ord I) z
+            dictTrans2 d = withDict d Dict
             dictEq :: Dict (All (Compose Eq I)) xs
-            dictEq = mapAll (\d -> withDict d Dict) dict
+            dictEq = mapAll (dictTrans1 . dictTrans0) dict
             dictOrd :: Dict (All (Compose Ord I)) xs
-            dictOrd = mapAll (\d -> withDict d Dict) dict
+            dictOrd = mapAll (dictTrans2 . dictTrans0) dict
          in withDict dictEq (withDict dictOrd (Tabelle (M.intersectionWith id f a)))
 
 instance (All Dimension xs, Semigroup r) => Semigroup (Tabelle xs r) where
@@ -88,10 +112,16 @@ fromList :: forall xs a. All Dimension xs => [(NP I xs, a)] -> Either (NP I xs) 
 fromList entries =
     let dict :: Dict (All Dimension) xs
         dict = Dict
+        dictTrans0 :: forall z . Dict Dimension z -> Dict (Compose (Show `And` Eq `And` Ord) I) z 
+        dictTrans0 d = withDict d Dict
+        dictTrans1 :: forall z . Dict (Compose (Show `And` Eq `And` Ord) I) z -> Dict (Compose Eq I) z
+        dictTrans1 d = withDict d Dict
+        dictTrans2 :: forall z . Dict (Compose (Show `And` Eq `And` Ord) I) z -> Dict (Compose Ord I) z
+        dictTrans2 d = withDict d Dict
         dictEq :: Dict (All (Compose Eq I)) xs
-        dictEq = mapAll (\d -> withDict d Dict) dict
+        dictEq = mapAll (dictTrans1 . dictTrans0) dict
         dictOrd :: Dict (All (Compose Ord I)) xs
-        dictOrd = mapAll (\d -> withDict d Dict) dict
+        dictOrd = mapAll (dictTrans2 . dictTrans0) dict
      in withDict dictEq (withDict dictOrd (
             let mapita = M.fromList entries
                 findKey k = case M.lookup k mapita of
