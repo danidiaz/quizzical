@@ -8,7 +8,7 @@
 module Tabelle (
       -- * The Tabelle data type
       Tabelle
-    , Dimensions
+    , Dimension
     , fromList
     , fromList'
     , toList
