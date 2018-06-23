@@ -1,5 +1,5 @@
 {-# LANGUAGE ApplicativeDo #-}
-module Tabelle.Klartext (table2D,dim,dim',cell) where
+module Tabelle.Klartext (table2D,dim,dimRead,cell) where
 
 import Data.Char
 import Data.Void
@@ -33,8 +33,8 @@ table2D (d1,d2) rP = do
 dim :: Parser Text
 dim = takeWhile1P Nothing (\c -> isAlphaNum c || c == '\'')
 
-dim' :: Read a => Parser a
-dim' = do
+dimRead :: Read a => Parser a
+dimRead = do
     d <- dim
     case readMaybe (unpack d) of
         Nothing -> empty
