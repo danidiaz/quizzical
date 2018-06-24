@@ -1,6 +1,23 @@
 {-# LANGUAGE ApplicativeDo #-}
 {-# LANGUAGE DataKinds #-}
-module Tabelle.Klartext (tableD1,table2D,dim,dimRead,cell) where
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE FlexibleInstances #-}
+module Tabelle.Klartext (
+              Parser
+            , tableD1
+            , table2D
+            , dim
+            , dimRead
+            , cell
+            -- * Megaparsec re-exports
+            , Text.Megaparsec.parse
+            , Text.Megaparsec.parseMaybe
+            , Text.Megaparsec.parseTest
+            , Text.Megaparsec.parseTest'
+            , Text.Megaparsec.parseErrorPretty
+       ) where
 
 import           Data.Char
 import           Data.Void
@@ -10,13 +27,43 @@ import           Control.Applicative
 import           Text.Read
 import           Text.Megaparsec
 import           Text.Megaparsec.Char
-import           Generics.SOP (NP(..),I(..))
+--import           Generics.SOP (NP(..),I(..))
+
+import           Tabelle
+import           Tabelle.Internal
 
 type Parser = Parsec Void Text 
+
+class Klartext (xs :: [*]) where
+    parser :: NP Parser xs -> Parser v -> Parser [(NP I xs, v)]
+    --parser :: NP Parser xs -> Parser r -> Parser (Tabelle xs r)
+
+instance Klartext '[x] where
+    parser (kp :* Nil) vp = tableD1 kp vp
+
+instance Klartext xs => Klartext (x ': xs) where
+    parser (kp :* npxs) vp = tableDN kp (parser npxs vp)
 
 -- http://hackage.haskell.org/package/megaparsec-6.2.0/docs/Text-Megaparsec.html
 -- http://hackage.haskell.org/package/megaparsec-6.2.0/docs/Text-Megaparsec-Char.html
 -- http://hackage.haskell.org/package/parser-combinators-0.2.0/docs/Control-Applicative-Combinators.html
+
+tableDN :: Parser k -> Parser [(NP I xs, v)] -> Parser [(NP I (k ': xs), v)]  
+tableDN kp xsvp = 
+    do space
+       char '('
+       space
+       kvs <- sepEndBy1 pair space1
+       char ')'
+       pure (mconcat kvs)
+  where
+    mkEntry k (xs,v) = 
+       (I k :* xs,v)
+    pair =
+       do k <- kp
+          space1
+          xsv <- xsvp
+          pure (mkEntry k <$> xsv)
 
 tableD1 :: Parser k -> Parser v -> Parser [(NP I '[k], v)]  
 tableD1 kp vp = 

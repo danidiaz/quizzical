@@ -50,7 +50,7 @@ basicexpectedD1 =
 
 basicD1 :: Assertion
 basicD1 = do
-    let result = parse (tableD1 (dimRead @D1) cell) "" tabletextD1
+    let result = parse (tableD1 (dimRead @D1 :* Nil) cell) "" tabletextD1
     case result of
         Right x -> case fromList x of
             Right actual -> assertEqual "parse results" basicexpectedD1 actual
