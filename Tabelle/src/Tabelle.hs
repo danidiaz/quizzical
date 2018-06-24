@@ -11,9 +11,9 @@ module Tabelle (
     , AllC
     , Dimensions
     , fromList
-    , fromList_NP
+    , fromList'
     , toList
-    , toList_NP
+    , toList'
     -- * from generics-sop
     , NP(..)
     , I(..)
