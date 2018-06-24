@@ -1,12 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeApplications #-}
 module Main where
 
 import Data.Monoid
 import Data.List
 import Data.Text (Text)
 import Test.Tasty
-import Test.Tasty.HUnit (testCase,Assertion,assertEqual,assertBool)
+import Test.Tasty.HUnit (testCase,Assertion,assertEqual,assertBool,assertFailure)
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
@@ -20,11 +21,45 @@ tests :: TestTree
 tests = 
     testGroup "All" 
     [
-      testCase "basic" basic 
+      testCase "basicD1" basicD1 
+    , testCase "basic" basic 
     , testCase "basicSpaceAtEnd" basicSpaceAtEnd 
     , testCase "basicDoubled" basicDoubled
     , testCase "basicDoubled2" basicDoubled2
     ]
+
+data D1 = X | Y | Z deriving (Eq,Ord,Enum,Bounded,Show,Read)
+
+tabletextD1 :: Text
+tabletextD1 =
+       mconcat
+    .  (\ts -> intersperse "\n" ts ++ ["\n"])
+    $  ["(X  x"
+       ," Y  y"
+       ," Z  z)"
+       ]
+
+basicexpectedD1 :: Tabelle '[D1] Text
+basicexpectedD1 = 
+    let list = [ (I X :* Nil,"x")
+               , (I Y :* Nil,"y")
+               , (I Z :* Nil,"z")
+               ] 
+     in case fromList list of
+        Right x -> x
+
+basicD1 :: Assertion
+basicD1 = do
+    let result = parse (tableD1 (dimRead @D1) cell) "" tabletextD1
+    case result of
+        Right x -> case fromList x of
+            Right actual -> assertEqual "parse results" basicexpectedD1 actual
+            Left e -> assertFailure (show e)
+        Left e -> assertFailure (parseErrorPretty e)
+
+---
+---
+---
 
 tabletext :: Text
 tabletext =
@@ -36,9 +71,11 @@ tabletext =
        ,"Z  za   zb"
        ]
 
-data D1 = X | Y | Z deriving (Eq,Ord,Enum,Bounded,Show,Read)
 
 data D2 = A | B deriving (Eq,Ord,Enum,Bounded,Show,Read)
+
+
+
 
 basicexpected :: Tabelle '[D1,D2] Text
 basicexpected = 
