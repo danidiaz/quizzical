@@ -8,13 +8,15 @@
 module Tabelle (
       -- * The Tabelle data type
       Tabelle
-    , AllC
     , Dimensions
+    , AllC
+    -- * from and to NP 
     , fromList
-    , fromList'
     , toList
+    -- * from and to records
+    , fromList'
     , toList'
-    -- * from generics-sop
+    -- * generics-sop re-rexports
     , NP(..)
     , I(..)
     ) where

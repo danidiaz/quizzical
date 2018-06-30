@@ -4,10 +4,11 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
 module Tabelle.Klartext (
               Parser
-            , tableD1
-            , table2D
+            , Klartext(..)
+            -- * Useful parsers
             , dim
             , dimRead
             , cell
@@ -16,6 +17,8 @@ module Tabelle.Klartext (
             , Text.Megaparsec.parseMaybe
             , Text.Megaparsec.parseTest
             , Text.Megaparsec.parseTest'
+            , Text.Megaparsec.runParser
+            , Text.Megaparsec.runParser'
             , Text.Megaparsec.parseErrorPretty
        ) where
 
@@ -27,10 +30,10 @@ import           Control.Applicative
 import           Text.Read
 import           Text.Megaparsec
 import           Text.Megaparsec.Char
---import           Generics.SOP (NP(..),I(..))
+import           Generics.SOP (NP(..),I(..))
 
-import           Tabelle
-import           Tabelle.Internal
+--import           Tabelle
+--import           Tabelle.Internal
 
 type Parser = Parsec Void Text 
 
@@ -41,7 +44,7 @@ class Klartext (xs :: [*]) where
 instance Klartext '[x] where
     parser (kp :* Nil) vp = tableD1 kp vp
 
-instance Klartext xs => Klartext (x ': xs) where
+instance Klartext (y ': xs) => Klartext (x ': y ': xs) where
     parser (kp :* npxs) vp = tableDN kp (parser npxs vp)
 
 -- http://hackage.haskell.org/package/megaparsec-6.2.0/docs/Text-Megaparsec.html
@@ -82,20 +85,6 @@ tableD1 kp vp =
           v <- vp
           pure (mkEntry k v)
 
-table2D :: (Show d1,Ord d1,Show d2,Ord d2,Show r) 
-        => (Parser d1,Parser d2) 
-        -> Parser r 
-        -> Parser [((d1,d2),r)]
-table2D (d1,d2) rP = do
-    cols <- blank1 *> sepEndBy1 d2 blank1 <* eol
-    rows <- sepEndBy1 (rowP cols) eol
-    return $ mconcat $ zipWith (\c (r,v) -> ((r,c),v)) cols <$> rows
-    where 
-    rowP cols = do
-        header <- d1 <* blank1
-        row <- sepEndBy1 rP blank1  
-        return $ map ((,) header) row
-     
 dim :: Parser Text
 dim = takeWhile1P Nothing (\c -> isAlphaNum c || c == '\'')
 
@@ -109,15 +98,3 @@ dimRead = do
 cell :: Parser Text
 cell =  takeWhile1P Nothing (\c -> isAlphaNum c || c == '-' || c == '_' || c == '.')
 
-blank :: Parser ()
-blank = void (takeWhileP (Just "white space") ((==) ' '))
-
-blank1 :: Parser ()
-blank1 = void (takeWhile1P (Just "white space") ((==) ' '))
-
--- TODO
--- set notation
--- 1d tables
--- changes in nomenclature (-D)
--- integrate with Tabelle ?
---

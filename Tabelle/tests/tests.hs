@@ -22,10 +22,7 @@ tests =
     testGroup "All" 
     [
       testCase "basicD1" basicD1 
-    , testCase "basic" basic 
-    , testCase "basicSpaceAtEnd" basicSpaceAtEnd 
-    , testCase "basicDoubled" basicDoubled
-    , testCase "basicDoubled2" basicDoubled2
+    , testCase "basicD2" basicD2 
     ]
 
 data D1 = X | Y | Z deriving (Eq,Ord,Enum,Bounded,Show,Read)
@@ -50,7 +47,7 @@ basicexpectedD1 =
 
 basicD1 :: Assertion
 basicD1 = do
-    let result = parse (tableD1 (dimRead @D1 :* Nil) cell) "" tabletextD1
+    let result = parse (parser (dimRead @D1 :* Nil) cell) "" tabletextD1
     case result of
         Right x -> case fromList x of
             Right actual -> assertEqual "parse results" basicexpectedD1 actual
@@ -61,24 +58,22 @@ basicD1 = do
 ---
 ---
 
-tabletext :: Text
-tabletext =
-       mconcat
-    .  (\ts -> intersperse "\n" ts ++ ["\n"])
-    $  ["   A    B"
-       ,"X  xa   xb"
-       ,"Y  ya   yb"
-       ,"Z  za   zb"
-       ]
-
-
 data D2 = A | B deriving (Eq,Ord,Enum,Bounded,Show,Read)
 
+tabletextD2 :: Text
+tabletextD2 =
+       mconcat
+    .  (\ts -> intersperse "\n" ts ++ ["\n"])
+    $  ["(X (A  xa"
+       ,"    B  xb)"
+       ," Y (A  ya"
+       ,"    B  yb)"
+       ," Z (A  za"
+       ,"    B  zb))"
+       ]
 
-
-
-basicexpected :: Tabelle '[D1,D2] Text
-basicexpected = 
+basicexpectedD2 :: Tabelle '[D1,D2] Text
+basicexpectedD2 = 
     let list = [ ((X,A),"xa")
                , ((X,B),"xb")
                , ((Y,A),"ya")
@@ -89,42 +84,16 @@ basicexpected =
      in case fromList' list of
         Right x -> x
 
-tabletextSpaceAtEnd :: Text
-tabletextSpaceAtEnd = tabletext <> " "
-
-tabletextDoubled :: Text
-tabletextDoubled = tabletext <> "\n" <> tabletext
-
-tabletextDoubled2 :: Text
-tabletextDoubled2 = tabletext <> tabletext
-
-basic :: Assertion
-basic = do
-    let result = parseMaybe (table2D (dimRead,dimRead) cell) tabletext 
+basicD2 :: Assertion
+basicD2 = do
+    let result = parse (parser (dimRead @D1 :* dimRead @D2 :* Nil) cell) "" tabletextD2
     case result of
-        Just x -> case fromList' x of
-            Right actual -> assertEqual "parse results" basicexpected actual
+        Right x -> case fromList x of
+            Right actual -> assertEqual "parse results" basicexpectedD2 actual
+            Left e -> assertFailure (show e)
+        Left e -> assertFailure (parseErrorPretty e)
 
-basicSpaceAtEnd :: Assertion
-basicSpaceAtEnd = do
-    let result = parseMaybe (table2D (dimRead,dimRead) cell <* space) tabletextSpaceAtEnd
-    case result of
-        Just x -> case fromList' x of
-            Right actual -> assertEqual "parse results" basicexpected actual
-
-basicDoubled :: Assertion
-basicDoubled = do
-    let p = table2D (dimRead,dimRead) cell 
-        result = parseMaybe (p *> eol *> p) tabletextDoubled
-    case result of
-        Just x -> case fromList' x of
-            Right actual -> assertEqual "parse results" basicexpected actual
-
-basicDoubled2 :: Assertion
-basicDoubled2 = do
-    let p = table2D (dimRead,dimRead) cell 
-        result = parseMaybe (p *> p) tabletextDoubled2
-    case result of
-        Just x -> case fromList' x of
-            Right actual -> assertEqual "parse results" basicexpected actual
+---
+---
+---
 
