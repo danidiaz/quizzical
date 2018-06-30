@@ -17,8 +17,6 @@ module Tabelle.Klartext (
             , Text.Megaparsec.parseMaybe
             , Text.Megaparsec.parseTest
             , Text.Megaparsec.parseTest'
-            , Text.Megaparsec.runParser
-            , Text.Megaparsec.runParser'
             , Text.Megaparsec.parseErrorPretty
        ) where
 
