@@ -94,5 +94,10 @@ dimRead = do
         Just a -> return a
 
 cell :: Parser Text
-cell =  takeWhile1P Nothing (\c -> isAlphaNum c || c == '-' || c == '_' || c == '.')
+cell =  
+    let unquoted c =  isAlphaNum c || c == '-' || c == '_' || c == '.'
+        quoted c = unquoted c || isSpace c 
+     in try (char '"' *> takeWhileP Nothing quoted <* char '"') 
+        <|> 
+        takeWhile1P Nothing unquoted
 

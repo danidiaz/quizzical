@@ -22,6 +22,7 @@ tests =
     testGroup "All" 
     [
       testCase "basicD1" basicD1 
+    , testCase "basicD1Quoted" basicD1Quoted 
     , testCase "basicD2" basicD2 
     ]
 
@@ -96,4 +97,31 @@ basicD2 = do
 ---
 ---
 ---
+
+tabletextD1Quoted :: Text
+tabletextD1Quoted =
+       mconcat
+    .  (\ts -> intersperse "\n" ts ++ ["\n"])
+    $  ["(X  \"u v\""
+       ," Y  \"\""
+       ," Z  z)"
+       ]
+
+basicexpectedD1Quoted :: Tabelle '[D1] Text
+basicexpectedD1Quoted = 
+    let list = [ (I X :* Nil,"u v")
+               , (I Y :* Nil,"")
+               , (I Z :* Nil,"z")
+               ] 
+     in case fromList list of
+        Right x -> x
+
+basicD1Quoted :: Assertion
+basicD1Quoted = do
+    let result = parse (parser (dimRead @D1 :* Nil) cell) "" tabletextD1Quoted
+    case result of
+        Right x -> case fromList x of
+            Right actual -> assertEqual "parse results" basicexpectedD1Quoted actual
+            Left e -> assertFailure (show e)
+        Left e -> assertFailure (parseErrorPretty e)
 
