@@ -5,3 +5,8 @@
 [APLicative Programming with Naperian Functors](https://www.youtube.com/watch?v=D1sT0xNrHIQ)
 
 [Super classes with All from generics-sop](https://stackoverflow.com/questions/50777865/super-classes-with-all-from-generics-sop)
+
+[DECISION TABLES](https://www.hillelwayne.com/post/decision-tables/)
+
+>  If you’re feeling saucy you can add enumeration inputs, too, as long as the
+>  enumerations cover all the possible values for that input. 
