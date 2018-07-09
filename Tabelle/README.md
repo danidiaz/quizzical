@@ -10,3 +10,6 @@
 
 >  If you’re feeling saucy you can add enumeration inputs, too, as long as the
 >  enumerations cover all the possible values for that input. 
+
+[Tabular expressions in Software
+Engineering](https://pdfs.semanticscholar.org/750f/ecf4349faeeab9a827a929de37be30f3df26.pdf)
