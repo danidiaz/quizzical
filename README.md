@@ -24,4 +24,7 @@ Deutsche Grammatik
 
 [The Language Technology Group](http://www.cse.chalmers.se/research/group/Language-technology/)
 
+[DECISION TABLES](https://www.hillelwayne.com/post/decision-tables/)
 
+>  If you’re feeling saucy you can add enumeration inputs, too, as long as the
+>  enumerations cover all the possible values for that input. 

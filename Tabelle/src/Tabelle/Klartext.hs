@@ -95,9 +95,15 @@ dimRead = do
 
 cell :: Parser Text
 cell =  
-    let unquoted c =  isAlphaNum c || c == '-' || c == '_' || c == '.'
+    let unquoted c =  isAlphaNum c || c == '-' || c == '_' || c == '.' || c == '\''
         quoted c = unquoted c || isSpace c 
      in try (char '"' *> takeWhileP Nothing quoted <* char '"') 
         <|> 
         takeWhile1P Nothing unquoted
 
+-- TODO
+-- - set notation
+-- - aliases for fields
+-- auto-currying ?
+-- pattern synonyms
+-- should the parser be thingly integrated with Tabelle? 
