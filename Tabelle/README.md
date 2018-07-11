@@ -13,3 +13,5 @@
 
 [Tabular expressions in Software
 Engineering](https://pdfs.semanticscholar.org/750f/ecf4349faeeab9a827a929de37be30f3df26.pdf)
+
+[Lobsters comments on decision tables](https://lobste.rs/s/fekedc/decision_tables#c_kgn6bu)
