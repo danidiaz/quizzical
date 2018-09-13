@@ -15,3 +15,6 @@
 Engineering](https://pdfs.semanticscholar.org/750f/ecf4349faeeab9a827a929de37be30f3df26.pdf)
 
 [Lobsters comments on decision tables](https://lobste.rs/s/fekedc/decision_tables#c_kgn6bu)
+
+[I make charts in Haskell with Representable](https://twitter.com/phadej/status/1037667021968822272)
+
