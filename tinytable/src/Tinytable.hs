@@ -12,8 +12,8 @@ module Tinytable (
     , fromList
     , toList
     -- * from and to records
-    , fromList'
-    , toList'
+    , fromListR
+    , toListR
     -- * Utility classes and functions
     , Curry(..)
     -- * generics-sop re-rexports

@@ -68,8 +68,8 @@ fromList entries =
             Nothing -> Left  k 
     in  Tinytable . M.fromList <$> traverse findKey enumerate_NP 
 
-fromList' :: forall r xs a. (IsProductType r xs, Dimensions xs) => [(r, a)] -> Either r (Tinytable xs a)
-fromList' entries = 
+fromListR :: forall r xs a. (IsProductType r xs, Dimensions xs) => [(r, a)] -> Either r (Tinytable xs a)
+fromListR entries = 
       first (to . SOP . Z)
     . fromList  
     . fmap (first (unZ . unSOP . from))
@@ -78,8 +78,8 @@ fromList' entries =
 toList :: forall xs a . Dimensions xs => Tinytable xs a -> [(NP I xs, a)]  
 toList (Tinytable t) = M.toList t 
 
-toList' :: forall r xs a . (IsProductType r xs, Dimensions xs) => Tinytable xs a -> [(r, a)]  
-toList' (Tinytable t) = fmap (first (to . SOP . Z)) $ M.toList t 
+toListR :: forall r xs a . (IsProductType r xs, Dimensions xs) => Tinytable xs a -> [(r, a)]  
+toListR (Tinytable t) = fmap (first (to . SOP . Z)) $ M.toList t 
 
 enumerate_NP :: forall xs. Dimensions xs => [NP I xs]
 enumerate_NP = 
