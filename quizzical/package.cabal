@@ -1,14 +1,14 @@
 -- https://jpvillaisaza.github.io/2017/03/14/minimal-cabal-files/
-name:                Einstufung
+name:                quizzical
 version:             0.1.0.0
 license:             BSD3
 license-file:        LICENSE
 build-type:          Simple
 cabal-version:       >= 2
 
-executable Einstufung
+executable quizzical
     hs-source-dirs:      src
     main-is:             Main.hs
     build-depends:       base >= 4.10 && < 5,
-                         Grammatik == 0.1.0.0
+                         tinytable == 0.1.0.0
     default-language:    Haskell2010

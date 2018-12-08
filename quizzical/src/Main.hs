@@ -1,6 +1,6 @@
 module Main where
 
-import Grammatik
+import Tinytable
 
 main :: IO ()
 main = return ()
