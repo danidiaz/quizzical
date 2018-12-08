@@ -11,7 +11,9 @@ module Tinytable (
     -- * from and to NP 
     , fromList
     , toList
-    -- * from and to records
+    -- * working with nominal records
+    , indexR
+    , tabulateR
     , fromListR
     , toListR
     -- * Utility classes and functions

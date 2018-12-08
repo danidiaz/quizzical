@@ -59,6 +59,12 @@ instance (Dimensions xs, Semigroup r) => Semigroup (Tinytable xs r) where
 instance (Dimensions xs, Monoid r) => Monoid (Tinytable xs r) where
     mempty = tabulate (const mempty)
     a `mappend` b = liftA2 mappend a b
+   
+indexR :: (IsProductType r xs, Dimensions xs) => Tinytable xs v -> r -> v 
+indexR tt = index tt .  unZ . unSOP . from 
+
+tabulateR :: (IsProductType r xs, Dimensions xs) => (r -> v) -> Tinytable xs v
+tabulateR f = tabulate (\np -> f (to (SOP (Z (np)))))
 
 fromList :: forall xs a. Dimensions xs => [(NP I xs, a)] -> Either (NP I xs) (Tinytable xs a)
 fromList entries =
