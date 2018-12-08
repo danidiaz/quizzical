@@ -11,8 +11,8 @@ import Test.Tasty.HUnit (testCase,Assertion,assertEqual,assertBool,assertFailure
 import Text.Megaparsec
 import Text.Megaparsec.Char
 
-import Tabelle
-import Tabelle.Klartext
+import Tinytable
+import Tinytable.Klartext
 
 main :: IO ()
 main = defaultMain tests
@@ -37,7 +37,7 @@ tabletextD1 =
        ," Z  z)"
        ]
 
-basicexpectedD1 :: Tabelle '[D1] Text
+basicexpectedD1 :: Tinytable '[D1] Text
 basicexpectedD1 = 
     let list = [ (I X :* Nil,"x")
                , (I Y :* Nil,"y")
@@ -73,7 +73,7 @@ tabletextD2 =
        ,"    B  zb))"
        ]
 
-basicexpectedD2 :: Tabelle '[D1,D2] Text
+basicexpectedD2 :: Tinytable '[D1,D2] Text
 basicexpectedD2 = 
     let list = [ ((X,A),"xa")
                , ((X,B),"xb")
@@ -107,7 +107,7 @@ tabletextD1Quoted =
        ," Z  z)"
        ]
 
-basicexpectedD1Quoted :: Tabelle '[D1] Text
+basicexpectedD1Quoted :: Tinytable '[D1] Text
 basicexpectedD1Quoted = 
     let list = [ (I X :* Nil,"u v")
                , (I Y :* Nil,"")

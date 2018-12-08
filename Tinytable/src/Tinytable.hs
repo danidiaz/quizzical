@@ -5,9 +5,9 @@
 --
 --   Be careful with the number and size of the dimensions or you will risk a
 --   combinatorial explosion!
-module Tabelle (
-      -- * The Tabelle data type
-      Tabelle
+module Tinytable (
+      -- * The Tinytable data type
+      Tinytable
     , Dimensions
     , AllC
     -- * from and to NP 
@@ -22,6 +22,6 @@ module Tabelle (
     ) where
 import           Generics.SOP (NP(..),I(..))
 
-import           Tabelle.Internal
+import           Tinytable.Internal
 
 

@@ -5,9 +5,9 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
-module Tabelle.Klartext (
+module Tinytable.Megaparsec (
               Parser
-            , Klartext(..)
+            , Parsable(..)
             -- * Useful parsers
             , dim
             , dimRead
@@ -29,19 +29,19 @@ import           Text.Megaparsec
 import           Text.Megaparsec.Char
 import           Generics.SOP (NP(..),I(..))
 
---import           Tabelle
---import           Tabelle.Internal
+--import           Tinytable
+--import           Tinytable.Internal
 
 type Parser = Parsec Void Text 
 
-class Klartext (xs :: [*]) where
+class Parsable (xs :: [*]) where
     parser :: NP Parser xs -> Parser v -> Parser [(NP I xs, v)]
-    --parser :: NP Parser xs -> Parser r -> Parser (Tabelle xs r)
+    --parser :: NP Parser xs -> Parser r -> Parser (Tinytable xs r)
 
-instance Klartext '[x] where
+instance Parsable '[x] where
     parser (kp :* Nil) vp = tableD1 kp vp
 
-instance Klartext (y ': xs) => Klartext (x ': y ': xs) where
+instance Parsable (y ': xs) => Parsable (x ': y ': xs) where
     parser (kp :* npxs) vp = tableDN kp (parser npxs vp)
 
 -- http://hackage.haskell.org/package/megaparsec-6.2.0/docs/Text-Megaparsec.html
@@ -105,4 +105,4 @@ cell =
 -- - aliases for fields
 -- auto-currying ?
 -- pattern synonyms
--- should the parser be thingly integrated with Tabelle? 
+-- should the parser be thingly integrated with Tinytable? 
