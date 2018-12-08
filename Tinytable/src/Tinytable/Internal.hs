@@ -11,21 +11,24 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TypeOperators #-}
 module Tinytable.Internal where
 
 import           Data.Maybe (fromJust)
 import           Data.Bifunctor (first)
+import           Data.Kind
 import           Data.Proxy
 import           Data.Distributive
 import           Data.Functor.Rep
 import           Control.Applicative
-import           Generics.SOP (Compose,I,All,And,NP,IsProductType,SOP(SOP),NS(Z),unSOP,unZ,from,to)
-import           Generics.SOP.NP (sequence_NP, cpure_NP)
+import           Generics.SOP (Compose,I,All,And,NP,IsProductType,SOP(SOP),NS(Z),unSOP,unZ,from,to,I(..))
+import           Generics.SOP.NP (sequence_NP, cpure_NP, NP((:*),Nil))
 import           Generics.SOP.Dict
 import qualified Data.Map.Strict as M
 
-newtype Tinytable (xs :: [*]) r = Tinytable { getTinytable :: M.Map (NP I xs) r } 
-                              deriving (Functor,Foldable,Traversable)
+newtype Tinytable (xs :: [Type]) r = Tinytable { getTinytable :: M.Map (NP I xs) r } 
+                                     deriving (Functor,Foldable,Traversable)
 
 type AllC c xs = All (Generics.SOP.Compose c I) xs
 
@@ -85,4 +88,16 @@ enumerate_NP =
                             (Dict :: Dict (All Bounded) xs)
         proxy = Proxy @(Enum `And` Bounded)
      in withDict dictZipped (sequence_NP @xs (cpure_NP proxy (enumFromTo minBound maxBound)))
+
+class Curry (xs :: [Type]) where
+    type Expand xs v :: Type
+    multicurry :: (NP I xs -> v) -> Expand xs v
+
+instance Curry '[a] where
+    type Expand '[a] v = a -> v
+    multicurry f a = f (I a :* Nil)
+
+instance Curry (b:cs) => Curry (a:b:cs) where
+    type Expand (a:b:cs) v = a -> Expand (b:cs) v
+    multicurry f a = multicurry (\np -> f (I a :* np))
 
