@@ -1,14 +1,12 @@
-# Grammatik
-
-Deutsche Grammatik
+# quizzical
 
 ## Development
 
 > cabal new-build 
 
-> ghcid --command="cabal new-repl tablitas-plaintext"
+> ghcid --command="cabal new-repl tinytable"
 
-## Inspiration
+## Stuff
 
 [Functional Morphology: A Tutorial](http://www.cse.chalmers.se/alumni/markus/FM/document/FM_tutorial_1.0.pdf)
 
