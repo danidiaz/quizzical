@@ -53,7 +53,7 @@ basicD1 = do
         Right x -> case fromList x of
             Right actual -> assertEqual "parse results" basicexpectedD1 actual
             Left e -> assertFailure (show e)
-        Left e -> assertFailure (parseErrorPretty e)
+        Left e -> assertFailure (errorBundlePretty e)
 
 ---
 ---
@@ -92,7 +92,7 @@ basicD2 = do
         Right x -> case fromList x of
             Right actual -> assertEqual "parse results" basicexpectedD2 actual
             Left e -> assertFailure (show e)
-        Left e -> assertFailure (parseErrorPretty e)
+        Left e -> assertFailure (errorBundlePretty e)
 
 ---
 ---
@@ -123,5 +123,5 @@ basicD1Quoted = do
         Right x -> case fromList x of
             Right actual -> assertEqual "parse results" basicexpectedD1Quoted actual
             Left e -> assertFailure (show e)
-        Left e -> assertFailure (parseErrorPretty e)
+        Left e -> assertFailure (errorBundlePretty e)
 
