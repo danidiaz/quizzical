@@ -154,7 +154,7 @@ type family GetConstructorName (r :: ConstructorInfo) :: Symbol where
 -- values = liftA_NP (mapKK (to . SOP)) (ap_NP injections (hpure Nil))
 --values = liftA_NP (mapKK (to . SOP)) foobar
 
-values :: forall r c. (Generic r, Code r ~ c, POSN c, SListI2 c) => NP (K r) c
+values :: forall r c. (Generic r, Code r ~ c, POSN c) => NP (K r) c
 values = liftA_NP (mapKK (to . SOP)) posn
 
 -- products of sums of nil
