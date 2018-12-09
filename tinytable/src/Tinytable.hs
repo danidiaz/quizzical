@@ -25,6 +25,8 @@ module Tinytable (
     , I(..)
     , All
     , Compose
+    , values
+    , Foo
     ) where
 import           Generics.SOP (NP(..),I(..),All,Compose)
 
