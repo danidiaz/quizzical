@@ -4,7 +4,7 @@
 --   Be careful with the number and size of the dimensions or you will risk a
 --   combinatorial explosion!
 module Tinytable (
-      -- * The Tinytable data type
+      -- * the Tinytable data type
       Tinytable
     , Dimensions
     , AllC
@@ -20,13 +20,16 @@ module Tinytable (
     , Expand
     , indexC
     , tabulateC
+    -- * serialization helpers
+    , AliasesFor
+    , ConstructorNamesOf 
+    , values
+    , Foo
     -- * generics-sop re-rexports
     , NP(..)
     , I(..)
     , All
     , Compose
-    , values
-    , Foo
     ) where
 import           Generics.SOP (NP(..),I(..),All,Compose)
 

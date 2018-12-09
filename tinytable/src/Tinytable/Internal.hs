@@ -14,6 +14,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE PolyKinds #-}
 
 module Tinytable.Internal where
 
@@ -27,7 +28,7 @@ import           Data.Text (Text)
 import qualified Data.Text as T
 import           GHC.TypeLits
 import           Control.Applicative
-import           Generics.SOP (SListI2,hcoerce,Generic,Compose,I,All,And,NP,IsProductType,SOP(SOP),NS(Z),unSOP,unZ,from,to,I(..),K(..),IsEnumType,Code,projections,injections,mapKK,Injection,apFn,type (-.->)(..),hpure)
+import           Generics.SOP (HasDatatypeInfo(..),DatatypeInfoOf(..),SListI2,hcoerce,Generic,Compose,I,All,And,NP,IsProductType,SOP(SOP),NS(Z),unSOP,unZ,from,to,I(..),K(..),IsEnumType,Code,projections,injections,mapKK,Injection,apFn,type (-.->)(..),hpure)
 import           Generics.SOP.NP (map_NP,ap_NP,liftA_NP,sequence_NP, cpure_NP, NP((:*),Nil))
 import           Generics.SOP.NS
 import           Generics.SOP.Dict
@@ -133,10 +134,13 @@ tabulateC :: (Dimensions xs, Uncurry xs) => Expand xs v -> Tinytable xs v
 tabulateC = tabulate . uncurry_NP 
 
 --
-type AliasesFor ns = NP (K Text) ns
+type AliasesFor (ns :: [Symbol]) = NP (K Text) ns
 
-type family ConstructorNamesOf (r :: DatatypeInfo) :: [Symbol] where
-    ConstructorNamesOf (ADT moduleName datatypeName constructors) = MapGetConstructorName constructors
+type family ConstructorNamesOf (r :: Type) :: [Symbol] where
+    ConstructorNamesOf r = MapGetConstructorName (GetConstructors (DatatypeInfoOf r))
+
+type family GetConstructors (r :: DatatypeInfo) :: [ConstructorInfo] where
+    GetConstructors (ADT moduleName datatypeName constructors) = constructors
     
 type family MapGetConstructorName (r :: [ConstructorInfo]) :: [Symbol] where
     MapGetConstructorName '[] = '[]
@@ -153,3 +157,4 @@ values =
 data Foo = Bar | Baz deriving (Show,GHC.Generic)
 
 instance Generic Foo
+instance HasDatatypeInfo Foo
