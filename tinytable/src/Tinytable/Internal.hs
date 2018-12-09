@@ -28,8 +28,9 @@ import           Data.Text (Text)
 import qualified Data.Text as T
 import           GHC.TypeLits
 import           Control.Applicative
-import           Generics.SOP (HasDatatypeInfo(..),DatatypeInfoOf(..),SListI2,hcoerce,Generic,Compose,I,All,And,NP,IsProductType,SOP(SOP),NS(Z),unSOP,unZ,from,to,I(..),K(..),IsEnumType,Code,projections,injections,mapKK,Injection,apFn,type (-.->)(..),hpure)
-import           Generics.SOP.NP (map_NP,ap_NP,liftA_NP,sequence_NP, cpure_NP, NP((:*),Nil))
+import           Data.Foldable
+import           Generics.SOP (AllZip(..),LiftedCoercible(..),HasDatatypeInfo(..),DatatypeInfoOf(..),SListI2,hcoerce,Generic,Compose,I,All,And,NP,IsProductType,SOP(SOP),NS(Z),unSOP,unZ,from,to,I(..),K(..),IsEnumType,Code,projections,injections,mapKK,Injection,apFn,type (-.->)(..),hpure)
+import           Generics.SOP.NP (collapse_NP,map_NP,ap_NP,liftA_NP,sequence_NP, cpure_NP, NP((:*),Nil))
 import           Generics.SOP.NS
 import           Generics.SOP.Dict
 import           Generics.SOP.Type.Metadata
@@ -153,6 +154,21 @@ values :: forall r . IsEnumType r => NP (K r) (Code r)
 values =
   map_NP (mapKK (to . SOP))
          (apInjs'_NP (cpure_NP (Proxy @((~) '[])) Nil))
+
+
+alternatives :: forall f r xss ns. 
+                (Alternative f,
+                 IsEnumType r, 
+                 Code r ~ xss,
+                 HasDatatypeInfo r,
+                 ConstructorNamesOf r ~ ns,
+                 All KnownSymbol ns,
+                 AllZip (LiftedCoercible (K Text) (K Text)) ns xss) 
+             => AliasesFor ns
+             -> f r
+alternatives aliases = 
+    let vals = values @r
+     in asum (collapse_NP _)
 
 data Foo = Bar | Baz deriving (Show,GHC.Generic)
 
