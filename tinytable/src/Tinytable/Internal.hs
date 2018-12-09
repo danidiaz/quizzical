@@ -28,7 +28,7 @@ import qualified Data.Text as T
 import           GHC.TypeLits
 import           Control.Applicative
 import           Generics.SOP (SListI2,hcoerce,Generic,Compose,I,All,And,NP,IsProductType,SOP(SOP),NS(Z),unSOP,unZ,from,to,I(..),K(..),IsEnumType,Code,projections,injections,mapKK,Injection,apFn,type (-.->)(..),hpure)
-import           Generics.SOP.NP (ap_NP,liftA_NP,sequence_NP, cpure_NP, NP((:*),Nil))
+import           Generics.SOP.NP (map_NP,ap_NP,liftA_NP,sequence_NP, cpure_NP, NP((:*),Nil))
 import           Generics.SOP.NS
 import           Generics.SOP.Dict
 import           Generics.SOP.Type.Metadata
@@ -145,34 +145,10 @@ type family MapGetConstructorName (r :: [ConstructorInfo]) :: [Symbol] where
 type family GetConstructorName (r :: ConstructorInfo) :: Symbol where
     GetConstructorName (Constructor n) = n
 
--- What do I need? A way of producing a NP of   
--- of a um type. Constructing a n-ary product of all the values of a simple sum type.
--- The key: to (S S S())
-
---values :: forall r c. (Generic r, Code r ~ c, Foo c, SListI2 c) => NP (K r) c
---values = liftA_NP (mapKK (to . SOP))  (liftA_NP (\(Fn inj) -> inj _) injections)
--- values = liftA_NP (mapKK (to . SOP)) (ap_NP injections (hpure Nil))
---values = liftA_NP (mapKK (to . SOP)) foobar
-
-values :: forall r c. (Generic r, Code r ~ c, POSN c) => NP (K r) c
-values = liftA_NP (mapKK (to . SOP)) posn
-
--- products of sums of nil
-class POSN xss where
-    posn :: NP (K (NS (NP I) xss)) xss   
-    
-instance POSN '[] where
-    posn = Nil
-
-instance (SListI2 xss, POSN xss) => POSN ('[] ': xss) where
-    posn = let previous = posn @xss
-            in K (Z Nil) :* liftA_NP (mapKK S) previous
-
---changy :: forall xss . SListI2 xss => NP (K (NS (NP I) xss)) xss -> NP (K (NS (NP I) ('[] : xss))) xss 
---changy = liftA_NP (mapKK S)
-
---soopa :: forall xss. SListI2 xss => NS (NP I) xss -> NS (NP I) ('[] : xss)
---soopa ns = S ns
+values :: forall r . IsEnumType r => NP (K r) (Code r)
+values =
+  map_NP (mapKK (to . SOP))
+         (apInjs'_NP (cpure_NP (Proxy @((~) '[])) Nil))
 
 data Foo = Bar | Baz deriving (Show,GHC.Generic)
 
