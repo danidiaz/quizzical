@@ -161,11 +161,11 @@ values = liftA_NP (mapKK (to . SOP)) posn
 class POSN xss where
     posn :: NP (K (NS (NP I) xss)) xss   
     
-instance POSN '[ '[] ] where
-    posn =  K (Z Nil) :* Nil
+instance POSN '[] where
+    posn = Nil
 
-instance (SListI2 xss, POSN xss, xss ~ (ys ': yss)) => POSN ('[] ': ys ': yss) where
-    posn = let previous = posn @(ys ': yss)
+instance (SListI2 xss, POSN xss) => POSN ('[] ': xss) where
+    posn = let previous = posn @xss
             in K (Z Nil) :* liftA_NP (mapKK S) previous
 
 --changy :: forall xss . SListI2 xss => NP (K (NS (NP I) xss)) xss -> NP (K (NS (NP I) ('[] : xss))) xss 
