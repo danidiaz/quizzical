@@ -95,15 +95,31 @@ enumerate_NP =
         proxy = Proxy @(Enum `And` Bounded)
      in withDict dictZipped (sequence_NP @xs (cpure_NP proxy (enumFromTo minBound maxBound)))
 
+type family Expand (xs :: [Type]) (v :: Type) :: Type where
+    Expand '[a] v = a -> v
+    Expand (a:b:cs) v = a -> Expand (b:cs) v
+
 class Curry (xs :: [Type]) where
-    type Expand xs v :: Type
-    multicurry :: (NP I xs -> v) -> Expand xs v
+    curry_NP :: (NP I xs -> v) -> Expand xs v
 
 instance Curry '[a] where
-    type Expand '[a] v = a -> v
-    multicurry f a = f (I a :* Nil)
+    curry_NP f a = f (I a :* Nil)
 
 instance Curry (b:cs) => Curry (a:b:cs) where
-    type Expand (a:b:cs) v = a -> Expand (b:cs) v
-    multicurry f a = multicurry (\np -> f (I a :* np))
+    curry_NP f a = curry_NP (\np -> f (I a :* np))
+
+class Uncurry (xs :: [Type]) where
+    uncurry_NP ::  Expand xs v -> NP I xs -> v
+
+instance Uncurry '[a] where
+    uncurry_NP f (I a :* Nil) = f a
+
+instance Uncurry (b:cs) => Uncurry (a:b:cs) where
+    uncurry_NP f (I a :* np) = uncurry_NP (f a) np
+
+indexC :: (Dimensions xs, Curry xs) => Tinytable xs v -> Expand xs v
+indexC tt = curry_NP (index tt)
+
+tabulateC :: (Dimensions xs, Uncurry xs) => Expand xs v -> Tinytable xs v
+tabulateC = tabulate . uncurry_NP 
 

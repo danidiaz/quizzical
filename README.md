@@ -6,6 +6,10 @@
 
 > ghcid --command="cabal new-repl tinytable"
 
+> cabal new-haddock all --haddock-html
+
+> warp -d dist-newstyle\build\...\ghc-8.4.3\tinytable-0.1.0.0\doc\html\tinytable\
+
 ## Stuff
 
 [Functional Morphology: A Tutorial](http://www.cse.chalmers.se/alumni/markus/FM/document/FM_tutorial_1.0.pdf)

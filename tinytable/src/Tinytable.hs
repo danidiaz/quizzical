@@ -16,13 +16,17 @@ module Tinytable (
     , tabulateR
     , fromListR
     , toListR
-    -- * Utility classes and functions
-    , Curry(..)
+    -- * curried/uncurried functions
+    , Expand
+    , indexC
+    , tabulateC
     -- * generics-sop re-rexports
     , NP(..)
     , I(..)
+    , All
+    , Compose
     ) where
-import           Generics.SOP (NP(..),I(..))
+import           Generics.SOP (NP(..),I(..),All,Compose)
 
 import           Tinytable.Internal
 
