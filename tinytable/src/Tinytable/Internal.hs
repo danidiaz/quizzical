@@ -29,8 +29,8 @@ import qualified Data.Text as T
 import           GHC.TypeLits
 import           Control.Applicative
 import           Data.Foldable
-import           Generics.SOP (AllZip(..),LiftedCoercible(..),HasDatatypeInfo(..),DatatypeInfoOf(..),SListI2,hcoerce,Generic,Compose,I,All,And,NP,IsProductType,SOP(SOP),NS(Z),unSOP,unZ,from,to,I(..),K(..),IsEnumType,Code,projections,injections,mapKK,Injection,apFn,type (-.->)(..),hpure)
-import           Generics.SOP.NP (collapse_NP,map_NP,ap_NP,liftA_NP,sequence_NP, cpure_NP, NP((:*),Nil))
+import           Generics.SOP (AllZip(..),LiftedCoercible(..),HasDatatypeInfo(..),DatatypeInfoOf(..),SListI2,hcoerce,Generic,Compose,I,All,And,NP,IsProductType,SOP(SOP),NS(Z),unSOP,unZ,from,to,I(..),K(..),IsEnumType,Code,projections,injections,mapKK,mapKKK,Injection,apFn,type (-.->)(..),hpure)
+import           Generics.SOP.NP (liftA2_NP,collapse_NP,map_NP,ap_NP,liftA_NP,sequence_NP, cpure_NP, NP((:*),Nil))
 import           Generics.SOP.NS
 import           Generics.SOP.Dict
 import           Generics.SOP.Type.Metadata
@@ -167,9 +167,9 @@ alternatives :: forall f r xss ns.
              => NP (K (f ())) ns
              -> f r
 alternatives as = 
-    let vals = hcoerce as :: NP (K (f ())) xss
-        -- follow with hmap?
-     in asum (collapse_NP _)
+    let aliases = hcoerce as :: NP (K (f ())) xss
+        mapped = liftA2_NP (mapKKK (\p x -> p *> pure x)) aliases (values @r) :: NP (K (f r)) xss
+     in asum (collapse_NP mapped)
 
 data Foo = Bar | Baz deriving (Show,GHC.Generic)
 
