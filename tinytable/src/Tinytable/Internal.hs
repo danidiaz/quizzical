@@ -163,11 +163,12 @@ alternatives :: forall f r xss ns.
                  HasDatatypeInfo r,
                  ConstructorNamesOf r ~ ns,
                  All KnownSymbol ns,
-                 AllZip (LiftedCoercible (K Text) (K Text)) ns xss) 
-             => AliasesFor ns
+                 AllZip (LiftedCoercible (K (f ())) (K (f ()))) ns xss) 
+             => NP (K (f ())) ns
              -> f r
-alternatives aliases = 
-    let vals = values @r
+alternatives as = 
+    let vals = hcoerce as :: NP (K (f ())) xss
+        -- follow with hmap?
      in asum (collapse_NP _)
 
 data Foo = Bar | Baz deriving (Show,GHC.Generic)
