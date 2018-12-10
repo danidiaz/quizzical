@@ -12,7 +12,7 @@ import Text.Megaparsec
 import Text.Megaparsec.Char
 
 import Tinytable
-import Tinytable.Klartext
+import Tinytable.Megaparsec
 
 main :: IO ()
 main = defaultMain tests
@@ -48,7 +48,7 @@ basicexpectedD1 =
 
 basicD1 :: Assertion
 basicD1 = do
-    let result = parse (parser (dimRead @D1 :* Nil) cell) "" tabletextD1
+    let result = parse (parser (readDimParser @D1 :* Nil) textCellParser) "" tabletextD1
     case result of
         Right x -> case fromList x of
             Right actual -> assertEqual "parse results" basicexpectedD1 actual
@@ -82,12 +82,12 @@ basicexpectedD2 =
                , ((Z,A),"za")
                , ((Z,B),"zb")
                ] 
-     in case fromList' list of
+     in case fromListR list of
         Right x -> x
 
 basicD2 :: Assertion
 basicD2 = do
-    let result = parse (parser (dimRead @D1 :* dimRead @D2 :* Nil) cell) "" tabletextD2
+    let result = parse (parser (readDimParser @D1 :* readDimParser @D2 :* Nil) textCellParser) "" tabletextD2
     case result of
         Right x -> case fromList x of
             Right actual -> assertEqual "parse results" basicexpectedD2 actual
@@ -118,7 +118,7 @@ basicexpectedD1Quoted =
 
 basicD1Quoted :: Assertion
 basicD1Quoted = do
-    let result = parse (parser (dimRead @D1 :* Nil) cell) "" tabletextD1Quoted
+    let result = parse (parser (readDimParser @D1 :* Nil) textCellParser) "" tabletextD1Quoted
     case result of
         Right x -> case fromList x of
             Right actual -> assertEqual "parse results" basicexpectedD1Quoted actual

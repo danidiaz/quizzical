@@ -9,9 +9,8 @@ module Tinytable.Megaparsec (
               Parser
             , Parsable(..)
             -- * Useful parsers
-            , dim
-            , dimRead
-            , cell
+            , readDimParser
+            , textCellParser
             -- * Megaparsec re-exports
             , Text.Megaparsec.parse
             , Text.Megaparsec.parseMaybe
@@ -82,18 +81,15 @@ tableD1 kp vp =
           v <- vp
           pure (mkEntry k v)
 
-dim :: Parser Text
-dim = takeWhile1P Nothing (\c -> isAlphaNum c || c == '\'')
-
-dimRead :: Read a => Parser a
-dimRead = do
-    d <- dim
+readDimParser :: Read a => Parser a
+readDimParser = do
+    d <- takeWhile1P Nothing (\c -> isAlphaNum c || c == '\'')
     case readMaybe (unpack d) of
         Nothing -> empty
         Just a -> return a
 
-cell :: Parser Text
-cell =  
+textCellParser :: Parser Text
+textCellParser =  
     let unquoted c =  isAlphaNum c || c == '-' || c == '_' || c == '.' || c == '\''
         quoted c = unquoted c || isSpace c 
      in try (char '"' *> takeWhileP Nothing quoted <* char '"') 
