@@ -5,12 +5,14 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE TypeApplications #-}
 module Tinytable.Megaparsec (
               Parser
             , Parsable(..)
             -- * Useful parsers
-            , readDimParser
-            , textCellParser
+            , readable
+            , allReadable
+            , quotable
             -- * Megaparsec re-exports
             , Text.Megaparsec.parse
             , Text.Megaparsec.parseMaybe
@@ -21,12 +23,13 @@ module Tinytable.Megaparsec (
 import           Data.Char
 import           Data.Void
 import           Data.Functor
+import           Data.Proxy
 import           Data.Text (Text,unpack)
 import           Control.Applicative
 import           Text.Read
 import           Text.Megaparsec
 import           Text.Megaparsec.Char
-import           Generics.SOP (NP(..),I(..))
+import           Generics.SOP (hcpure,All,IsEnumType,NP(..),I(..))
 
 --import           Tinytable
 --import           Tinytable.Internal
@@ -81,24 +84,26 @@ tableD1 kp vp =
           v <- vp
           pure (mkEntry k v)
 
-readDimParser :: Read a => Parser a
-readDimParser = do
-    d <- takeWhile1P Nothing (\c -> isAlphaNum c || c == '\'')
+-- https://www.haskell.org/onlinereport/lexemes.html
+readable :: Read a => Parser a
+readable = do
+    d <- takeWhile1P Nothing (\c -> isAlphaNum c || c == '_' || c == '\'') -- isAsciiUpper ?
     case readMaybe (unpack d) of
         Nothing -> empty
         Just a -> return a
 
-textCellParser :: Parser Text
-textCellParser =  
-    let unquoted c =  isAlphaNum c || c == '-' || c == '_' || c == '.' || c == '\''
-        quoted c = unquoted c || isSpace c 
-     in try (char '"' *> takeWhileP Nothing quoted <* char '"') 
+allReadable :: All Read xs => NP Parser xs
+allReadable = hcpure (Proxy @Read) readable
+
+quotable :: Parser Text
+quotable =  
+    let unquotable c =  isAlphaNum c || c == '-' || c == '_' || c == '.' || c == '\''
+        quotable c = unquotable c || isSpace c 
+     in try (char '"' *> takeWhileP Nothing quotable <* char '"') 
         <|> 
-        takeWhile1P Nothing unquoted
+        takeWhile1P Nothing unquotable
 
 -- TODO
 -- - set notation
--- - aliases for fields
--- auto-currying ?
--- pattern synonyms
--- should the parser be thingly integrated with Tinytable? 
+-- - aliases for fields?
+-- add tinytable.sop, move stuff there?

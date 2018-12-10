@@ -48,7 +48,7 @@ basicexpectedD1 =
 
 basicD1 :: Assertion
 basicD1 = do
-    let result = parse (parser (readDimParser @D1 :* Nil) textCellParser) "" tabletextD1
+    let result = parse (parser (readable @D1 :* Nil) quotable) "" tabletextD1
     case result of
         Right x -> case fromList x of
             Right actual -> assertEqual "parse results" basicexpectedD1 actual
@@ -87,7 +87,7 @@ basicexpectedD2 =
 
 basicD2 :: Assertion
 basicD2 = do
-    let result = parse (parser (readDimParser @D1 :* readDimParser @D2 :* Nil) textCellParser) "" tabletextD2
+    let result = parse (parser (readable @D1 :* readable @D2 :* Nil) quotable) "" tabletextD2
     case result of
         Right x -> case fromList x of
             Right actual -> assertEqual "parse results" basicexpectedD2 actual
@@ -118,7 +118,7 @@ basicexpectedD1Quoted =
 
 basicD1Quoted :: Assertion
 basicD1Quoted = do
-    let result = parse (parser (readDimParser @D1 :* Nil) textCellParser) "" tabletextD1Quoted
+    let result = parse (parser (readable @D1 :* Nil) quotable) "" tabletextD1Quoted
     case result of
         Right x -> case fromList x of
             Right actual -> assertEqual "parse results" basicexpectedD1Quoted actual
