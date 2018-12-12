@@ -10,6 +10,7 @@ library
   exposed-modules:     Tinytable
                        Tinytable.Internal
                        Tinytable.Megaparsec
+                       Tinytable.SOP
   build-depends:       base >=4.10 && <5,
                        generics-sop >= 0.4,
                        containers >= 0.5.10,

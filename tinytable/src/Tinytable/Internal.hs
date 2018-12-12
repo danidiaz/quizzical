@@ -16,7 +16,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE PolyKinds #-}
 
-module Tinytable.Internal where
+module Tinytable.Internal (module Tinytable.Internal, module Tinytable.SOP, module Generics.SOP) where
 
 import           Data.Maybe (fromJust)
 import           Data.Bifunctor (first)
@@ -24,8 +24,6 @@ import           Data.Kind
 import           Data.Proxy
 import           Data.Distributive
 import           Data.Functor.Rep
-import           Data.Text (Text)
-import qualified Data.Text as T
 import           GHC.TypeLits
 import           Control.Applicative
 import           Data.Foldable
@@ -36,12 +34,10 @@ import           Generics.SOP.Dict
 import           Generics.SOP.Type.Metadata
 import qualified Data.Map.Strict as M
 
-import qualified GHC.Generics as GHC
+import           Tinytable.SOP
 
 newtype Tinytable (xs :: [Type]) r = Tinytable { getTinytable :: M.Map (NP I xs) r } 
                                      deriving (Functor,Foldable,Traversable)
-
-type AllC c xs = All (Generics.SOP.Compose c I) xs
 
 type Dimensions xs = (All Enum xs, All Bounded xs, AllC Eq xs, AllC Ord xs, AllC Show xs)
 
@@ -106,72 +102,9 @@ enumerate_NP =
         proxy = Proxy @(Enum `And` Bounded)
      in withDict dictZipped (sequence_NP @xs (cpure_NP proxy (enumFromTo minBound maxBound)))
 
-type family Expand (xs :: [Type]) (v :: Type) :: Type where
-    Expand '[a] v = a -> v
-    Expand (a:b:cs) v = a -> Expand (b:cs) v
-
-class Curry (xs :: [Type]) where
-    curry_NP :: (NP I xs -> v) -> Expand xs v
-
-instance Curry '[a] where
-    curry_NP f a = f (I a :* Nil)
-
-instance Curry (b:cs) => Curry (a:b:cs) where
-    curry_NP f a = curry_NP (\np -> f (I a :* np))
-
-class Uncurry (xs :: [Type]) where
-    uncurry_NP ::  Expand xs v -> NP I xs -> v
-
-instance Uncurry '[a] where
-    uncurry_NP f (I a :* Nil) = f a
-
-instance Uncurry (b:cs) => Uncurry (a:b:cs) where
-    uncurry_NP f (I a :* np) = uncurry_NP (f a) np
-
 indexC :: (Dimensions xs, Curry xs) => Tinytable xs v -> Expand xs v
 indexC tt = curry_NP (index tt)
 
 tabulateC :: (Dimensions xs, Uncurry xs) => Expand xs v -> Tinytable xs v
 tabulateC = tabulate . uncurry_NP 
 
---
-type AliasesFor (ns :: [Symbol]) = NP (K Text) ns
-
-type family ConstructorNamesOf (r :: Type) :: [Symbol] where
-    ConstructorNamesOf r = MapGetConstructorName (GetConstructors (DatatypeInfoOf r))
-
-type family GetConstructors (r :: DatatypeInfo) :: [ConstructorInfo] where
-    GetConstructors (ADT moduleName datatypeName constructors) = constructors
-    
-type family MapGetConstructorName (r :: [ConstructorInfo]) :: [Symbol] where
-    MapGetConstructorName '[] = '[]
-    MapGetConstructorName (c : cs) = GetConstructorName c : MapGetConstructorName cs
-
-type family GetConstructorName (r :: ConstructorInfo) :: Symbol where
-    GetConstructorName (Constructor n) = n
-
-values :: forall r . IsEnumType r => NP (K r) (Code r)
-values =
-  map_NP (mapKK (to . SOP))
-         (apInjs'_NP (cpure_NP (Proxy @((~) '[])) Nil))
-
-
-alternatives :: forall f r xss ns. 
-                (Alternative f,
-                 IsEnumType r, 
-                 Code r ~ xss,
-                 HasDatatypeInfo r,
-                 ConstructorNamesOf r ~ ns,
-                 All KnownSymbol ns,
-                 AllZip (LiftedCoercible (K (f ())) (K (f ()))) ns xss) 
-             => NP (K (f ())) ns
-             -> f r
-alternatives as = 
-    let aliases = hcoerce as :: NP (K (f ())) xss
-        mapped = liftA2_NP (mapKKK (\p x -> p *> pure x)) aliases (values @r) :: NP (K (f r)) xss
-     in asum (collapse_NP mapped)
-
-data Foo = Bar | Baz deriving (Show,GHC.Generic)
-
-instance Generic Foo
-instance HasDatatypeInfo Foo

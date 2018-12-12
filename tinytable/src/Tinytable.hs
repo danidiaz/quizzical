@@ -7,29 +7,33 @@ module Tinytable (
       -- * the Tinytable data type
       Tinytable
     , Dimensions
-    , AllC
-    -- * from and to NP 
+    -- * from and to lists of entries
     , fromList
     , toList
-    -- * working with nominal records
+    -- * working with nominal records as keys
     , indexR
     , tabulateR
     , fromListR
     , toListR
     -- * curried/uncurried functions
-    , Expand
     , indexC
     , tabulateC
     -- * serialization helpers
-    , AliasesFor
-    , ConstructorNamesOf 
-    , values
     , Foo
     -- * generics-sop re-rexports
     , NP(..)
     , I(..)
+    , K(..)
     , All
     , Compose
+    -- * generics-sop extras
+    , AllC
+    , Expand
+    , Curry
+    , Uncurry
+    , AliasesFor
+    , enumValues
+    , alternatives
     ) where
 import           Generics.SOP (NP(..),I(..),All,Compose)
 
